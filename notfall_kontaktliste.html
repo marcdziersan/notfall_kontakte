@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notfall-Kontaktliste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 2rem;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Notfall-Kontaktliste</h1>
+        <p>Speichere und verwalte wichtige Notfallkontakte.</p>
+    </header>
+    <div>
+        <div class="input-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Name eingeben">
+        </div>
+        <div class="input-group">
+            <label for="number">Telefonnummer</label>
+            <input type="tel" id="number" placeholder="Telefonnummer eingeben">
+        </div>
+        <button id="add-contact">Kontakt hinzufügen</button>
+        <ul id="contact-list"></ul>
+    </div>
+    <script>
+        const contactList = document.getElementById('contact-list');
+        const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+
+        function renderContacts() {
+            contactList.innerHTML = '';
+            contacts.forEach((contact, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `${contact.name} - ${contact.number} 
+                <button onclick="deleteContact(${index})">X</button>`;
+                contactList.appendChild(li);
+            });
+        }
+
+        function deleteContact(index) {
+            contacts.splice(index, 1);
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            renderContacts();
+        }
+
+        document.getElementById('add-contact').addEventListener('click', () => {
+            const name = document.getElementById('name').value.trim();
+            const number = document.getElementById('number').value.trim();
+
+            if (!name || !number) {
+                alert('Bitte Name und Telefonnummer eingeben.');
+                return;
+            }
+
+            contacts.push({ name, number });
+            document.getElementById('name').value = '';
+            document.getElementById('number').value = '';
+            saveAndRender();
+        });
+
+        renderContacts();
+    </script>
+</body>
+</html>
